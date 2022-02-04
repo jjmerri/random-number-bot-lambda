@@ -1,0 +1,26 @@
+service: random-number-bot-lambda
+
+frameworkVersion: '3'
+
+custom:
+  stage: ${opt:stage, self:provider.stage}
+
+provider:
+  name: aws
+  runtime: python3.8
+  stage: staging # default of no CLI options passed in
+  environment:
+    REDDIT_USERNAME: ${ssm:/rnb-reddit-username-${self:custom.stage}}
+    REDDIT_PASSWORD: ${ssm:/rnb-reddit-password-${self:custom.stage}}
+    REDDIT_CLIENT_ID: ${ssm:/rnb-reddit-client-id-${self:custom.stage}}
+    REDDIT_CLIENT_SECRET: ${ssm:/rnb-reddit-client-secret-${self:custom.stage}}
+    EMAIL_SERVER: ${ssm:/rnb-email-server-${self:custom.stage}}
+    EMAIL_USERNAME: ${ssm:/rnb-email-username-${self:custom.stage}}
+    EMAIL_PASSWORD: ${ssm:/rnb-email-password-${self:custom.stage}}
+    APP_DEV_EMAIL: ${ssm:/rnb-dev-email-${self:custom.stage}}
+    APP_DEV_USERNAME: ${ssm:/rnb-dev-username-${self:custom.stage}}
+    APP_RANDOM_DOT_ORG_API_KEY: ${ssm:/rnb-rdo-api-key-${self:custom.stage}}
+
+functions:
+  randomNumberBot:
+    handler: src/random_number_bot.execute
