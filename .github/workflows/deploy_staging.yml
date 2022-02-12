@@ -21,9 +21,11 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/download-artifact@master
-      #        with:
-      #          name: build-artifact
+      - uses: dawidd6/action-download-artifact@v2
+        with:
+          workflow: ${{ github.event.workflow_run.workflow_id }}
+          workflow_conclusion: success
+          name: build_artifact
       - uses: actions/setup-node@v2
         with:
           node-version: 16
