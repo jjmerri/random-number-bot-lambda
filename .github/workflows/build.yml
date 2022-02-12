@@ -30,29 +30,3 @@ jobs:
           flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics --exclude "src/vendor/*"
           # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics --statistics --exclude "src/vendor/*"
-  deploy:
-    name: Deploy serverless lambda
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-    steps:
-      - name: Git clone the repository
-        uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-        with:
-          node-version: 16
-        #install serverless
-      - name: Install Serverless Framework
-        run: npm install -g serverless
-        # authentication
-        #serverless deploy
-      - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          role-to-assume: arn:aws:iam::344268766757:role/personal-dev-cd-nonprod
-          role-session-name: personal-dev-cd-role
-          aws-region: us-east-1
-      # deploy serverless
-      - name: Deploy serverless
-        run: |
-          serverless deploy --stage staging
