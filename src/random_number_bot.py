@@ -18,7 +18,7 @@ import requests
 # GLOBALS
 # =============================================================================
 
-VERSION = '1.1.7'
+VERSION = '1.2.0'
 
 # Reads the config file
 config = configparser.ConfigParser()
@@ -88,7 +88,7 @@ To verify the winner, click [this link]({random_verification_url_string}) with p
 
 ---
 
-[^(Give Feedback)](https://www.reddit.com/message/compose/?to=BlobAndHisBoy&subject=Feedback) ^| [^(Version {version} Source Code)](https://github.com/jjmerri/random-number-bot) ^| [^(Tip BlobAndHisBoy)](https://blobware-tips.firebaseapp.com)
+[^(Give Feedback)](https://www.reddit.com/message/compose/?to=BlobAndHisBoy&subject=Feedback) ^| [^(Version {version} Source Code)](https://github.com/jjmerri/random-number-bot-lambda) ^| [^(Tip BlobAndHisBoy)](https://blobware-tips.firebaseapp.com)
 
 ^(This bot is maintained and hosted by BlobAndHisBoy.)"""
 
