@@ -4,6 +4,9 @@ frameworkVersion: '3'
 
 custom:
   stage: ${opt:stage, self:provider.stage}
+  schedule:
+    prod: rate(5 minutes)
+    staging:
 
 provider:
   name: aws
@@ -24,3 +27,5 @@ provider:
 functions:
   randomNumberBot:
     handler: src/random_number_bot.execute
+    events:
+      - schedule: ${self:custom.schedule.${self:custom.stage}}
