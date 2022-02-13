@@ -206,14 +206,9 @@ def get_rdo_request(num_randoms, num_slots):
 
 
 def execute(event, context):
-    body = {
-        "message": "Go Serverless v3.0! Your function executed successfully!",
-        "input": event,
-    }
-
     check_mentions()
 
-    return {"statusCode": 200, "body": json.dumps(body)}
+    return {"statusCode": 200, "body": json.dumps({"message": "Random number bot has executed successfully!"})}
 
 # for simpler local testing
 # if __name__ == '__main__':
