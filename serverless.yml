@@ -28,4 +28,4 @@ functions:
   randomNumberBot:
     handler: src/random_number_bot.execute
     events:
-      - schedule: ${self:custom.schedule.${self:custom.stage}}
+      - schedule: ${self:custom.schedule.${self:custom.stage}, null}
