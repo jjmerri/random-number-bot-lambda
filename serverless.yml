@@ -10,6 +10,8 @@ custom:
 
 provider:
   name: aws
+  memorySize: 128 # MB
+  timeout: 6 # SEC
   runtime: python3.8
   stage: staging # default of no CLI options passed in
   environment:
