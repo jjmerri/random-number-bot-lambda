@@ -1,6 +1,6 @@
 service: random-number-bot-lambda
 
-frameworkVersion: '3'
+frameworkVersion: "3"
 
 custom:
   stage: ${opt:stage, self:provider.stage}
@@ -11,7 +11,7 @@ custom:
 provider:
   name: aws
   memorySize: 128 # MB
-  timeout: 6 # SEC
+  timeout: 600 # SEC
   runtime: python3.8
   stage: staging # default of no CLI options passed in
   environment:

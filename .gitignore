@@ -20,3 +20,5 @@ vendor/
 
 # Serverless directories
 .serverless
+
+__pycache__/
