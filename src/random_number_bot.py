@@ -18,7 +18,7 @@ import requests
 # GLOBALS
 # =============================================================================
 
-VERSION = '1.2.0'
+VERSION = '1.3.0'
 
 # Reads the config file
 config = configparser.ConfigParser()
@@ -148,7 +148,7 @@ def process_mention(mention):
         # could be a normal mention not a command so just return
         return
 
-    request = get_rdo_request(num_randoms, num_slots)
+    request = get_rdo_request(num_randoms, num_slots, mention.id)
 
     responseData = {}
     try:
@@ -198,10 +198,10 @@ def process_mention(mention):
             logger.exception("Unknown error sending dev pm or email")
 
 
-def get_rdo_request(num_randoms, num_slots):
+def get_rdo_request(num_randoms, num_slots, mentionId):
     return {'jsonrpc': '2.0', 'method': 'generateSignedIntegers',
             'params': {'apiKey': RANDOM_ORG_API_KEY, 'n': num_randoms, 'min': 1, 'max': num_slots,
-                       'replacement': False},
+                       'replacement': False, 'userData': {'mentionId': mentionId}},
             'id': uuid.uuid4().hex}
 
 
