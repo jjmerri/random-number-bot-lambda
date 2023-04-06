@@ -18,7 +18,7 @@ import requests
 # GLOBALS
 # =============================================================================
 
-VERSION = '1.2.0'
+VERSION = '1.3.0'
 
 # Reads the config file
 config = configparser.ConfigParser()
