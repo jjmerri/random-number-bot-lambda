@@ -45,9 +45,9 @@ jobs:
         with:
           name: build-artifact
           path: ./src
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v4
         with:
-          node-version: 16
+          node-version: 20
         #install serverless
       - name: Install Serverless Framework
         run: npm install -g serverless
@@ -77,9 +77,9 @@ jobs:
         with:
           name: build-artifact
           path: ./src
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v4
         with:
-          node-version: 16
+          node-version: 20
         #install serverless
       - name: Install Serverless Framework
         run: npm install -g serverless
