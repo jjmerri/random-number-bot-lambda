@@ -50,7 +50,7 @@ jobs:
           node-version: 20
         #install serverless
       - name: Install Serverless Framework
-        run: npm install -g serverless
+        run: npm install -g serverless@3
         # authentication
         #serverless deploy
       - name: configure aws credentials
@@ -82,7 +82,7 @@ jobs:
           node-version: 20
         #install serverless
       - name: Install Serverless Framework
-        run: npm install -g serverless
+        run: npm install -g serverless@3
         # authentication
         #serverless deploy
       - name: configure aws credentials
