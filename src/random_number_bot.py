@@ -158,8 +158,8 @@ def check_mentions():
 
         processed_count += 1
         # Allow early stop only after we've inspected at least 5 mentions and seen one already replied
-        if encountered_replied and processed_count >= 20:
-            logger.info('Encountered previously replied mention and inspected {count} mentions (threshold 20); stopping early.'
+        if encountered_replied and processed_count >= 5:
+            logger.info('Encountered previously replied mention and inspected {count} mentions; stopping early.'
                         .format(count=processed_count))
             break
 
