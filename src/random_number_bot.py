@@ -14,9 +14,6 @@ sys.path.insert(0, 'src/vendor')
 import praw
 import requests
 
-# for local testing, load environment variables from .env file
-# from dotenv import load_dotenv  # type: ignore
-
 # =============================================================================
 # GLOBALS
 # =============================================================================
@@ -50,8 +47,6 @@ bot_username = config.get("Reddit", "username")
 bot_password = config.get("Reddit", "password")
 client_id = config.get("Reddit", "client_id")
 client_secret = config.get("Reddit", "client_secret")
-
-print("bot_username:", env['REDDIT_USERNAME'])
 
 EMAIL_SERVER = config.get("Email", "server")
 EMAIL_USERNAME = config.get("Email", "username")
@@ -121,47 +116,10 @@ def send_dev_email(subject, body, email_addresses):
 
 
 def check_mentions():
-    processed_count = 0
-    encountered_replied = False
-    for mention in reddit.inbox.mentions(limit=None):
-        try:
-            # Refresh to ensure replies are loaded
-            mention.refresh()
-        except Exception:
-            logger.exception('Failed to refresh mention {id}'.format(id=mention.id))
-            continue
-
-        already_replied = False
-        try:
-            for reply in mention.replies:
-                if reply.author and str(reply.author).lower() == bot_username.lower():
-                    already_replied = True
-                    break
-        except Exception:
-            logger.exception('Error iterating replies for mention {id}'.format(id=mention.id))
-            continue
-
-        if already_replied:
-            logger.info('Skipping mention {id} - already replied'.format(id=mention.id))
-            encountered_replied = True
-            try:
-                mention.mark_read()
-            except Exception:
-                logger.exception('Failed to mark mention {id} as read while skipping'.format(id=mention.id))
-        else:
-            # Mark Read first in case there is an error we dont want to keep trying to process it
-            try:
-                mention.mark_read()
-            except Exception:
-                logger.exception('Failed to mark mention {id} as read prior to processing'.format(id=mention.id))
-            process_mention(mention)
-
-        processed_count += 1
-        # Allow early stop only after we've inspected at least 5 mentions and seen one already replied
-        if encountered_replied and processed_count >= 5:
-            logger.info('Encountered previously replied mention and inspected {count} mentions; stopping early.'
-                        .format(count=processed_count))
-            break
+    for mention in reddit.inbox.unread(limit=None):
+        # Mark Read first in case there is an error we dont want to keep trying to process it
+        mention.mark_read()
+        process_mention(mention)
 
 
 def process_mention(mention):
@@ -251,7 +209,6 @@ def execute(event, context):
     check_mentions()
 
     return {"statusCode": 200, "body": json.dumps({"message": "Random number bot has executed successfully!"})}
-
 
 # for simpler local testing
 # if __name__ == '__main__':

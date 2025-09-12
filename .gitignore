@@ -1,16 +1,4 @@
-# Local environment files (never commit secrets)
-.env
-
-# Python cache
-__pycache__/
-*.pyc
-
-# Virtual environments
-.venv/
-venv/
-
-# macOS metadata
-.DS_Store# Distribution / packaging
+# Distribution / packaging
 .Python
 env/
 build/
