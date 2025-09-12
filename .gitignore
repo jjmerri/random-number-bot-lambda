@@ -17,8 +17,11 @@ vendor/
 *.egg-info/
 .installed.cfg
 *.egg
+.env
 
 # Serverless directories
 .serverless
 
 __pycache__/
+
+venv/*
