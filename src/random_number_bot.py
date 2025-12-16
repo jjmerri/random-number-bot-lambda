@@ -29,8 +29,8 @@ def set_config():
     config.add_section("Email")
     config.add_section("RandomNumberBot")
 
-    config.set("Reddit", "username", env['REDDIT_USERNAME'])
-    config.set("Reddit", "password", env['REDDIT_PASSWORD'])
+    config.set("Reddit", "usernames", env['REDDIT_USERNAME'])
+    config.set("Reddit", "passwords", env['REDDIT_PASSWORD'])
     config.set("Reddit", "client_id", env['REDDIT_CLIENT_ID'])
     config.set("Reddit", "client_secret", env['REDDIT_CLIENT_SECRET'])
     config.set("Email", "server", env['EMAIL_SERVER'])
@@ -43,10 +43,14 @@ def set_config():
 
 set_config()
 
-bot_username = config.get("Reddit", "username")
-bot_password = config.get("Reddit", "password")
+bot_usernames = [username.strip() for username in config.get("Reddit", "usernames").split(',')]
+bot_passwords = [password.strip() for password in config.get("Reddit", "passwords").split(',')]
 client_id = config.get("Reddit", "client_id")
 client_secret = config.get("Reddit", "client_secret")
+
+# Validate that usernames and passwords lists have the same length
+if len(bot_usernames) != len(bot_passwords):
+    raise ValueError("REDDIT_USERNAME and REDDIT_PASSWORD must have the same number of comma-separated values")
 
 EMAIL_SERVER = config.get("Email", "server")
 EMAIL_USERNAME = config.get("Email", "username")
@@ -65,13 +69,19 @@ logging.basicConfig(format=FORMAT)
 logger = logging.getLogger('RandomNumberBot')
 logger.setLevel(logging.INFO)
 
-# Reddit info
-reddit = praw.Reddit(client_id=client_id,
-                     client_secret=client_secret,
-                     password=bot_password,
-                     user_agent='random_number_bot by {DEV_USER_NAME}'
-                     .format(DEV_USER_NAME=DEV_USER_NAME),
-                     username=bot_username)
+# Create Reddit instances for each user
+reddit_instances = []
+for username, password in zip(bot_usernames, bot_passwords):
+    reddit_instance = praw.Reddit(client_id=client_id,
+                                  client_secret=client_secret,
+                                  password=password,
+                                  user_agent='random_number_bot by {DEV_USER_NAME}'
+                                  .format(DEV_USER_NAME=DEV_USER_NAME),
+                                  username=username)
+    reddit_instances.append({'username': username, 'reddit': reddit_instance})
+
+# Use the first Reddit instance for dev messages (backward compatibility)
+reddit = reddit_instances[0]['reddit']
 
 random_verification_url = 'https://api.random.org/signatures/form?format=json&random={random}&signature={signature}'
 random_number_reply = """#{command_message} {random_numbers}
@@ -115,16 +125,20 @@ def send_dev_email(subject, body, email_addresses):
     server.close()
 
 
-def check_mentions():
-    for mention in reddit.inbox.unread(limit=None):
+def check_mentions(reddit_instance_info):
+    bot_username = reddit_instance_info['username']
+    reddit_instance = reddit_instance_info['reddit']
+    
+    for mention in reddit_instance.inbox.unread(limit=None):
         # Mark Read first in case there is an error we dont want to keep trying to process it
         mention.mark_read()
-        process_mention(mention)
+        process_mention(mention, bot_username)
 
 
-def process_mention(mention):
+def process_mention(mention, bot_username):
     logger.info(
-        'Processing comment by {author} for {context}'.format(author=str(mention.author), context=mention.context))
+        'Processing comment by {author} for {context} using bot {bot}'.format(
+            author=str(mention.author), context=mention.context, bot=bot_username))
 
     command_regex = r'^([ ]+)?/?u/{bot_username}[ ]+(?P<param_1>[\d]+)([ ]+(?P<param_2>[\d]+))?([ ]+)?$'.format(
         bot_username=bot_username)
@@ -206,7 +220,10 @@ def get_rdo_request(num_randoms, num_slots, mentionId):
 
 
 def execute(event, context):
-    check_mentions()
+    # Process mentions for each Reddit user
+    for reddit_instance_info in reddit_instances:
+        logger.info('Checking mentions for user: {username}'.format(username=reddit_instance_info['username']))
+        check_mentions(reddit_instance_info)
 
     return {"statusCode": 200, "body": json.dumps({"message": "Random number bot has executed successfully!"})}
 
